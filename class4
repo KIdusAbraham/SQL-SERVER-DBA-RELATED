@@ -1,0 +1,52 @@
+/* NOTES after reviewing the lecture video
+
+-----LIKE------
+
+the like statement is to find of filter the pattern in a column 
+	select *
+	from TableName
+	where [column] like 's%'  ## this means list all names that starts with letter 's'
+	where [column] like '%s'   ## this means list all names that ends with letter 's'
+	where [column] like '%mountain%' ## this means list all names that has mountain in the column
+	where [column] not like '%mountain%' ## this means list all names that has no mountain in the column
+	where [column] like '_m%' ## this means list all names that has has m in the second character (one underscore)
+	where [column] like '__m%' ## this means list all names that has has m in the third character (two underscores)
+	where [column] like '%m' or [%z] ## this means list all names that starts with m or z  
+	where [column] like '%m' or [%z] ## this means list all names that starts with m or z  
+	where [column] like '[^m]%' ## this means list all names that doesn't starts with m 
+
+The like statement is very expensive if the database is very large. Patter matching/ string manipulation is generally an expensive operation. 
+	
+----COMPUTER COLUMNS-two types 
+	1. Persistent column:  are calculated columns based on tables from other columns that will be stored in the database. The values are updated based on the formula attached to that column
+	2. dynamic columns: data/column created on the flight. 
+		example on how to create dynamic column
+			select [colomn1],[colomn2],[colomn3],[colomn1]*[colomn1] as [colomn4]
+			from TableName
+	The drawback of dynamic column is its use of computer CPU. large dataset could consume large memories 
+	
+
+---STRING CONCATENATION---- 
+in SQL server, concatenation syntax is '+'
+	example 
+		select [colomn1],[colomn2]+colomn3] as [colomn4]
+		from TableName
+		select [colomn1],[colomn2]+'_'+[colomn3] as [colomn4]
+		from TableName
+when you have a different data type, you need to convert the numeric into string 
+	
+	cast is the function we used to convert data type 
+	
+		select cast([colomn1] as varchar(100)),[colomn2]+'_'+[colomn3] as [colomn4]
+		from TableName
+									can we concatenate two numeric data types without converting then into string?
+if the columns to be concatenated contains a null values, the result is null. 
+to deal with this situation use an isnull function to convert whatever you want 
+	example 
+		select cast([colomn1] as varchar(100)),[colomn2]+'_'+isnull([colomn3],'') as [colomn4] ## if [column] is null replace it with zero character
+		from TableName
+if we use '+' on numeric data type, it will serve as an addition operator instead of concatenation. If we want to the numeric data types concatenate, we need to convert them in to string data type. 
+	example 
+		select cast([column1] as varchar(100)) + cast([column2],varchar(100)) 
+		from TableName
+*/
