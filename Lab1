@@ -1,0 +1,89 @@
+--use Sales.SalesPerson tabel for following questions. 
+------------------------------------------------------
+
+--1)Show all rows and all columns from Sales.SalesPerson table. 
+ANSEWR
+    select *
+    from  Sales.SalesPerson
+    
+--2)Show all rows and all columns from Sales.SalesPerson table. Order it by sales amount ytd ascending. 
+ANSEWR
+    select *
+    from  Sales.SalesPerson
+    order by sales
+    
+--3)Show sales person's personid, sales quota,commision pct,sales and last year sales information for from Sales.SalesPerson table. 
+--  Order it by sales amount decending.
+ANSEWR
+    select personid, sales quota,commision pct,sales, last year sales
+    from  Sales.SalesPerson
+    order by sales desc
+    
+--4)How many sales persons are there in the company  
+ANSEWR
+    select personid, sales quota,commision pct,sales, last year sales
+    from  Sales.SalesPerson
+    count(sales persons)
+    
+--5)which sales person made highest sales so far in this year? 
+ANSEWR
+
+--6)which sales person made least sales so far in this year? 
+ANSEWR
+
+--7)show top 25 percent of sales person based on their previous year sales. 
+ANSEWR
+
+--8)show the earning of each sales person so far in this year (use columns bonus and commission for computation).
+ANSEWR
+
+--9)BONUS QUESTION: Order above result based on total earning so far. 
+ANSEWR
+
+--10)Show all sales persons does not have a territory. 
+ANSEWR
+
+--11)Show all sales persons with territory. 
+ANSEWR
+
+--   which are the distinct territory IDs in the table. 
+ANSEWR
+
+--12)show all sales persons working on TerritoryID 1. 
+ANSEWR
+
+--13)BONUS QUESTION:  show the top sales persons working on TerritoryID 1 based on total sales made so far this year. 
+ANSEWR
+
+--14)show all sales persons working on TerritoryID 6 with more than $3000000 sales so far this year. . 
+ANSEWR
+
+--15)show sales person with no territory id and sales quota. 
+--16)show sales persons with sales quota less than $280000 or sales greater than $4000000
+---------------------------------------------------------
+--use Sales.SalesTerritory table for following questions. 
+---------------------------------------------------------
+ANSEWR
+
+--17)show all the sales territories in USA. 
+ANSEWR
+
+--18)show sales information of sales person working in USA using corelated sub query. 
+--   use Sales.SalesTerritory and Sales.SalesPerson tables for this query 
+ANSEWR
+
+--19)impliement above logic using an IN clause. 
+---------------------------------------------------------
+--use Production.Product table for following questions. 
+---------------------------------------------------------
+ANSEWR
+
+--20)select all produts with name starting with "chain" 	
+ANSEWR
+
+--21)select all produts with name ends with "bolt" 	
+ANSEWR
+
+--22)show name and color of all the produts. If the color column is null then display color as  "white" 
+--   use ISNULL function for this
+ANSEWR
