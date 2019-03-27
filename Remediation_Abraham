@@ -15,9 +15,41 @@ begin
 exec master..xp_cmdshell 'echo ''SEG_2.15,CIS,xp_cmdshell disabled,Comply,No remediation,El parametro "xp_cmdshell" esta deshabilitado> C:\Hardening\Hardnening_Resume.txt'''
 end
 --9	2.6	The Remote Access must be disabled
+if (SELECT CONVERT(INT,value)
+FROM sys.configurations
+WHERE name = 'remote access') = 1
+begin
+	exec ('EXECUTE sp_configure ''show advanced options'', 1;')
+	exec ('RECONFIGURE;')
+	exec ('EXECUTE sp_configure ''remote access'', 0;')
+	exec ('RECONFIGURE;')
+	exec ('EXECUTE sp_configure ''show advanced options'', 0;')
+	exec ('RECONFIGURE;')
+
+end
+else 
+begin 
+
+end
 
 
 --10	2.7	Ensure 'Remote Admin Connections' Server Configuration Option is set to '0' 
+
+if (SELECT CONVERT(INT,value)
+FROM sys.configurations
+WHERE name = 'remote admin connections') = 1
+begin
+	exec ('EXECUTE sp_configure ''show advanced options'', 1;')
+	exec ('RECONFIGURE;')
+	exec ('EXECUTE sp_configure ''remote admin connections'', 0;')
+	exec ('RECONFIGURE;')
+	exec ('EXECUTE sp_configure ''show advanced options'', 0;')
+	exec ('RECONFIGURE;')
+end 
+else 
+begin
+
+end 
 
 
 --11	2.8	The scan for startup procs configuration must be disabled
