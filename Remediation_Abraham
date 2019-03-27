@@ -41,6 +41,9 @@ end
 
 --12	2.15	The xp_cmdshell Server Configuration Option must be 0
 
+BRENT BLOG 
+https://www.brentozar.com/archive/2011/08/dedicated-admin-connection-why-want-when-need-how-tell-whos-using/
+
 if (SELECT CONVERT(INT,value)
 FROM sys.configurations
 WHERE name = 'xp_cmdshell') = 1
