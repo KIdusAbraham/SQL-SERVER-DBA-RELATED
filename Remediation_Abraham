@@ -10,11 +10,11 @@ begin
 	exec ('EXECUTE sp_configure ''show advanced options'', 0;')
 	exec ('RECONFIGURE;')
 
-end
-else 
-begin 
-xec master..xp_cmdshell 'echo ''SEG_2.15,CIS,xp_cmdshell disabled,Comply,No remediation,El parametro "xp_cmdshell" esta deshabilitado> C:\Hardening\Hardnening_Resume.txt'''
-end
+END
+ELSE 
+BEGIN 
+	exec master..xp_cmdshell 'echo ''SEG_2.15,CIS,xp_cmdshell disabled,Comply,No remediation,El parametro "xp_cmdshell" esta deshabilitado> C:\Hardening\Hardnening_Resume.txt'''
+END
 
 
 --10	2.7	Ensure 'Remote Admin Connections' Server Configuration Option is set to '0' 
@@ -22,21 +22,38 @@ end
 if (SELECT CONVERT(INT,value)
 FROM sys.configurations
 WHERE name = 'remote admin connections') = 1
-begin
+BEGIN
 	exec ('EXECUTE sp_configure ''show advanced options'', 1;')
 	exec ('RECONFIGURE;')
 	exec ('EXECUTE sp_configure ''remote admin connections'', 0;')
 	exec ('RECONFIGURE;')
 	exec ('EXECUTE sp_configure ''show advanced options'', 0;')
 	exec ('RECONFIGURE;')
-end 
-else 
-begin
-xec master..xp_cmdshell 'echo ''SEG_2.15,CIS,xp_cmdshell disabled,Comply,No remediation,El parametro "xp_cmdshell" esta deshabilitado> C:\Hardening\Hardnening_Resume.txt'''
-end 
+END
+ELSE 
+BEGIN 
+	exec master..xp_cmdshell 'echo ''SEG_2.15,CIS,xp_cmdshell disabled,Comply,No remediation,El parametro "xp_cmdshell" esta deshabilitado> C:\Hardening\Hardnening_Resume.txt'''
+END 
 
 
 --11	2.8	The scan for startup procs configuration must be disabled
+
+IF (select CONVERT(INT,value)
+FROM sys.configurations
+WHERE name = 'scan for startup procs') = 1
+
+BEGIN
+	exec ('EXECUTE sp_configure ''show advanced options'', 1;')
+	exec ('RECONFIGURE;')
+	exec ('EXECUTE sp_configure ''scan for startup procs'', 0;')
+	exec ('RECONFIGURE;')
+	exec ('EXECUTE sp_configure ''show advanced options'', 0;')
+	exec ('RECONFIGURE;')
+END
+ELSE
+BEGIN
+	exec master..xp_cmdshell 'echo ''SEG_2.8,CIS,The scan for startup procs configuration must be disabled,Comply,No Remediation,El parámetro "scan for startup procs" esta Deshabilitado>> C:\Hardening\Hardnening_Resume.txt'''
+END
 
 
 --12	2.15	The xp_cmdshell Server Configuration Option must be 0
@@ -54,22 +71,63 @@ BEGIN
 		exec ('RECONFIGURE;')
 		exec ('EXECUTE sp_configure ''show advanced options'', 0;')
 		exec ('RECONFIGURE;')
-end
-else 
-begin 
-exec master..xp_cmdshell 'echo ''SEG_2.15,CIS,xp_cmdshell disabled,Comply,No remediation,El parametro "xp_cmdshell" esta deshabilitado> C:\Hardening\Hardnening_Resume.txt'''
-end
+END
+ELSE 
+BEGIN 
+	exec master..xp_cmdshell 'echo ''SEG_2.15,CIS,xp_cmdshell disabled,Comply,No remediation,El parametro "xp_cmdshell" esta deshabilitado> C:\Hardening\Hardnening_Resume.txt'''
+END
 
 
 --13	2.1	Ensure 'Ad Hoc Distributed Queries' Server Configuration Option is set to '0'
 
+if (select CONVERT(INT,value)
+FROM sys.configurations
+WHERE name = 'Ad Hoc Distributed Queries') = 1
+BEGIN
+	exec ('EXECUTE sp_configure ''show advanced options'', 1;')
+	exec ('RECONFIGURE;')
+	exec ('EXECUTE sp_configure ''Ad Hoc Distributed Queries'', 0;')
+	exec ('RECONFIGURE;')
+	exec ('EXECUTE sp_configure ''show advanced options'', 0;')
+	exec ('RECONFIGURE;')
+END
+ELSE
+BEGIN
+	exec master..xp_cmdshell 'echo ''SEG_2.1,CIS,Ensure ''Ad Hoc Distributed Queries'' Server Configuration Option is set to ''0'',Comply,No remediation,El parámetro "Ad Hoc Distributed Queries" esta deshabilitado>> C:\Hardening\Hardnening_Resume.txt'''
+END
 
 --14	2.2	Ensure 'CLR Enabled' Server Configuration Option is set to '0'
+
+if (select CONVERT(INT,value)
+FROM sys.configurations
+WHERE name = 'clr enabled') = 1
+BEGIN
+	exec ('sp_configure ''show advanced options'', 1;') 
+	exec ('RECONFIGURE;') 
+	exec ('sp_configure ''clr enabled'', 0;')
+	exec ('RECONFIGURE;') 
+END
+ELSE
+BEGIN
+	exec master..xp_cmdshell 'echo ''SEG_2.2,CIS,Ensure ''CLR Enabled'' Server Configuration Option is set to ''0'',Comply,No remediation,El parámetro "CLR Enabled" esta deshabilitado>> C:\Hardening\Hardnening_Resume.txt'''
+END
 
 
 --15	2.3	Ensure 'Cross DB Ownership Chaining' Server Configuration Option is set to '0'
 
-
+if (select CONVERT(INT,value)
+FROM sys.configurations
+WHERE name = 'Cross DB Ownership Chaining') = 1
+BEGIN
+	exec ('sp_configure ''show advanced options'', 1;') 
+	exec ('RECONFIGURE;') 
+	exec ('sp_configure ''cross db ownership chaining'', 0;')
+	exec ('RECONFIGURE;') 
+END
+ELSE
+BEGIN
+	exec master..xp_cmdshell 'echo ''SEG_2.3,CIS,Ensure ''Cross DB Ownership Chaining'' Server Configuration Option is set to ''0'',Comply,No remediation,El parámetro "Cross DB Ownership Chaining" esta deshabilitado>> C:\Hardening\Hardnening_Resume.txt'''
+END
 --16	2.4	Ensure 'Database Mail XPs' Server Configuration Option is set to '0'
 
 
