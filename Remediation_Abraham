@@ -14,5 +14,53 @@ else
 begin 
 exec master..xp_cmdshell 'echo ''SEG_2.15,CIS,xp_cmdshell disabled,Comply,No remediation,El parametro "xp_cmdshell" esta deshabilitado> C:\Hardening\Hardnening_Resume.txt'''
 end
---The Remote Access must be disabled (rule 9) 
+--9	2.6	The Remote Access must be disabled
+
+
+--10	2.7	Ensure 'Remote Admin Connections' Server Configuration Option is set to '0' 
+
+
+--11	2.8	The scan for startup procs configuration must be disabled
+
+
+--12	2.15	The xp_cmdshell Server Configuration Option must be 0
+
+
+--13	2.1	Ensure 'Ad Hoc Distributed Queries' Server Configuration Option is set to '0'
+
+
+--14	2.2	Ensure 'CLR Enabled' Server Configuration Option is set to '0'
+
+
+--15	2.3	Ensure 'Cross DB Ownership Chaining' Server Configuration Option is set to '0'
+
+
+--16	2.4	Ensure 'Database Mail XPs' Server Configuration Option is set to '0'
+
+
+--17	2.5	Ensure 'Ole Automation Procedures' Server Configuration Option is set to '0'
+
+
+--18	2.9	Ensure 'Trustworthy' Database Property is set to 'Off'
+
+
+--19	2.12	Ensure 'Hide Instance' option is set to 'Yes' for Non-clustered SQL Server Production environments
+
+
+--20	5.1	Ensure 'Maximum number of error log files' is set to greater than or equal to '12'
+
+
+--21	8.1	Ensure 'SQL Server Browser Service' is disabled as per the default value
+
+
+--22	5.2	The parameter Include Execution trace messages must be disabled
+
+
+--23	5.3	Ensure 'Login Auditing' is set to 'failed logins' 
+
+
+--24	5.4	The SQL Server audit must be enabled
+
+
+--25	3.8	Ensure only the default permissions specified by Microsoft are granted to the public server role
 
