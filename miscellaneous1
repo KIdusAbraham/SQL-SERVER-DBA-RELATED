@@ -1,0 +1,163 @@
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+--PLEASE COPY AND PASTE THE FOLLOWING SCRIPTS TO CHECK THE DEFAULT DATABASE FOR THE INSTANNCE 
+--check to see if non-DB Admins have a system database as default database 
+
+SELECT *
+FROM    sys.server_principals p
+        JOIN sys.syslogins s ON p.sid = s.sid
+WHERE   p.type_desc IN ('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP')
+        -- Logins that are not process logins
+         AND p.name NOT LIKE '##%'
+		AND p.default_database_name not in ('master')
+        -- Logins that are sysadmins
+        AND s.sysadmin = 1
+
+
+
+
+--check to see if non-DB Admins have a system database as default database 
+
+		SELECT p.name, s.sysadmin, p.default_database_name
+FROM    sys.server_principals p
+        JOIN sys.syslogins s ON p.sid = s.sid
+WHERE   p.type_desc IN ('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP', 'server_role')
+        -- Logins that are not process logins
+         AND p.name NOT LIKE '##%'
+		AND p.default_database_name in ('master', 'model','msdb')
+        -- Logins that are sysadmins
+        AND s.sysadmin = 0
+
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+
+
+/*
+---- Corporate  SEG 22.4
+---- Default database for DB administrators
+*/
+
+IF NOT EXISTS (
+SELECT *
+FROM    sys.server_principals p
+        JOIN sys.syslogins s ON p.sid = s.sid
+WHERE   p.type_desc IN ('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP')
+        -- Logins that are not process logins
+         AND p.name NOT LIKE '##%'
+		AND p.default_database_name not in ('master')
+        -- Logins that are sysadmins
+        AND s.sysadmin = 1
+		--INTO OUTFILE 'C:\Abraham\complianceAbraham.txt'
+)
+BEGIN
+	exec master..xp_cmdshell 'echo ''22.4,Corporate,Default database master for DB administrators,Cumply,Todos los usuarios con Role sysadmin tienen por default la BD master> C:\Abraham\Hardnening_Compliance.Txt'''
+END
+ELSE
+BEGIN
+	exec master..xp_cmdshell 'echo ''22.4,Corporate,Default database master for DB administrators,FAILED,Remediation,Existen usuarios con Role sysadmin que no tienen por default la BD master>> C:\Abraham\Hardnening_Compliance.Txt'''
+end
+/*
+---- CIS 3.8
+---- Default database for Non-DB administrators
+
+*/
+IF NOT EXISTS (
+SELECT p.name, s.sysadmin, p.default_database_name
+FROM    sys.server_principals p
+        JOIN sys.syslogins s ON p.sid = s.sid
+WHERE   p.type_desc IN ('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP', 'server_role')
+        -- Logins that are not process logins
+         AND p.name NOT LIKE '##%'
+		AND p.default_database_name in ('master', 'model','msdb')
+        -- Logins that are sysadmins
+        AND s.sysadmin = 0
+)
+BEGIN
+	exec master..xp_cmdshell 'echo ''3_8,CIS,Default database for Non-DB administrators,Cumply,Todos los usuarios que no tienen el role sysadmin no tienen por default la BD master, model o msdb>> C:\Abraham\Hardnening_Compliance.Txt'''
+END
+ELSE
+BEGIN
+	exec master..xp_cmdshell 'echo ''3_8,CIS,Default database for Non-DB administrators, Failed,Remediation,Existen algunos usuarios que no tienen el role sysadmin y tienen por default la BD master, model o msdb>> C:\Abraham\Hardnening_Compliance.Txt'''
+END
+
+
+
+
+
+
+
+
+
+
+select loginname, sysadmin 
+from sys.syslogins
+where sysadmin = 1
+
+SELECT * FROM sys.server_principals sp
+		INNER JOIN sys.server_role_members sr ON sp.principal_id = sr.member_principal_id
+		INNER JOIN sys.server_principals sp2 ON sr.role_principal_id = sp2.principal_id
+	WHERE sp.[type] IN ('U', 'G', 'S', 'C')
+		AND sp2.name = 'sysadmin'
+		AND sp.default_database_name not in ('master')
+		AND sp.is_disabled = 0
+
+
+
+
+
+
+
+
+
+
+
+/*
+---- Corporate  SEG 22.4
+---- Default database for DB administrators
+*/
+
+IF NOT EXISTS (
+SELECT 1
+FROM    sys.server_principals p
+        JOIN sys.syslogins s ON p.sid = s.sid
+WHERE   p.type_desc IN ('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP')
+        -- Logins that are not process logins
+         AND p.name NOT LIKE '##%'
+		AND p.default_database_name not in ('master')
+        -- Logins that are sysadmins
+        AND s.sysadmin = 1
+)
+
+BEGIN
+	exec master..xp_cmdshell 'echo ''22.4,Corporate,Default database master for DB administrators,Cumply,Todos los usuarios con Role sysadmin tienen por default la BD master> C:\Abraham\Hardnening_Compliance.Txt'''
+END
+ELSE
+BEGIN
+	exec master..xp_cmdshell 'echo ''22.4,Corporate,Default database master for DB administrators,FAILED,Remediation,Existen usuarios con Role sysadmin que no tienen por default la BD master>> C:\Abraham\Hardnening_Compliance.Txt'''
+end
+
+/*
+---- CIS 3.8
+---- Default database for Non-DB administrators
+
+*/
+IF NOT EXISTS (
+SELECT p.name, s.sysadmin, p.default_database_name
+FROM    sys.server_principals p
+        JOIN sys.syslogins s ON p.sid = s.sid
+WHERE   p.type_desc IN ('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP', 'server_role')
+        -- Logins that are not process logins
+         AND p.name NOT LIKE '##%'
+		AND p.default_database_name in ('master', 'model','msdb')
+        -- Logins that are sysadmins
+        AND s.sysadmin = 0
+)
+BEGIN
+	exec master..xp_cmdshell 'echo ''3_8,CIS,Default database for Non-DB administrators,Cumply,Todos los usuarios que no tienen el role sysadmin no tienen por default la BD master, model o msdb>> C:\Abraham\Hardnening_Compliance.Txt'''
+END
+ELSE
+BEGIN
+	exec master..xp_cmdshell 'echo ''3_8,CIS,Default database for Non-DB administrators, Failed,Remediation,Existen algunos usuarios que no tienen el role sysadmin y tienen por default la BD master, model o msdb>> C:\Abraham\Hardnening_Compliance.Txt'''
+END
