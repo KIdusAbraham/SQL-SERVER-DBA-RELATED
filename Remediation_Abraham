@@ -1,0 +1,18 @@
+--The xp_cmdshell Server Configuration Option must be 0 (RULE 12)
+if (SELECT CONVERT(INT,value)
+FROM sys.configurations
+WHERE name = 'xp_cmdshell') = 1
+BEGIN
+		exec ('EXECUTE sp_configure ''show advanced options'', 1;')
+		exec ('RECONFIGURE;')
+		exec ('EXECUTE sp_configure ''xp_cmdshell'', 0;')
+		exec ('RECONFIGURE;')
+		exec ('EXECUTE sp_configure ''show advanced options'', 0;')
+		exec ('RECONFIGURE;')
+end
+else 
+begin 
+exec master..xp_cmdshell 'echo ''SEG_2.15,CIS,xp_cmdshell disabled,Comply,No remediation,El parametro "xp_cmdshell" esta deshabilitado> C:\Hardening\Hardnening_Resume.txt'''
+end
+--The Remote Access must be disabled (rule 9) 
+
