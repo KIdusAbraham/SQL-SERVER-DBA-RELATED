@@ -1,0 +1,43 @@
+
+
+--Agent proxy (rule 7)
+SELECT sp.name FROM msdb.dbo.sysproxylogin SPL 
+JOIN msdb.sys.database_principals DP ON DP.sid = SPL.sid 
+JOIN msdb.dbo.sysproxies sp on sp.proxy_id = spl.proxy_id 
+where principal_id = USER_ID('public');
+
+--check if the local windows users can login to sql server instances (rule 6)
+
+SELECT pr.[name] AS LocalGroupName, pe.[permission_name], pe.[state_desc] 
+FROM sys.server_principals pr 
+JOIN sys.server_permissions pe ON pr.[principal_id] = pe.[grantee_principal_id] 
+WHERE pr.[type_desc] = 'WINDOWS_GROUP' AND pr.[name] like CAST(SERVERPROPERTY('MachineName') AS nvarchar) + '%';
+
+
+--pull enabled network protocols for sql from registry (rule 8)
+select 'named pipes' as [protocol], iif(value_data = 1, 'yes', 'no')
+from sys.dm_server_registry
+where registry_key like '%' and value_name = 'enabled' 
+union 
+select 'shared memory', iif(value_data = 1, 'yes', 'no')
+from sys.dm_server_registry
+where registry_key like '%sm' and value_name = 'enabled'
+union 
+select 'tcp/ip', iif(value_data = 1, 'yes', 'no')
+from sys.dm_server_registry
+where registry_key like '%tcp' and value_name = 'enabled'
+
+
+--pull system configration option for rules 9-17 and 22
+select * from sys.configurations
+order by [name]
+
+
+--editing server property from registry 
+
+SELECT * --registry_key, value_name, value_data  
+FROM sys.dm_server_registry 
+
+SELECT registry_key, value_name, value_data  
+FROM sys.dm_server_registry  
+WHERE value_name = 'HideInstance'-- LIKE N'%SuperSocketNetLib%';  
