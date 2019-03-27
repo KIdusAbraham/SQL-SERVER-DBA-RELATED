@@ -1,0 +1,29 @@
+SELECT *
+FROM    sys.server_principals p
+        JOIN sys.syslogins s ON p.sid = s.sid
+WHERE   p.type_desc IN ('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP')
+        -- Logins that are not process logins
+         AND p.name NOT LIKE '##%'
+		AND p.default_database_name not in ('master')
+        -- Logins that are sysadmins
+        AND s.sysadmin = 1
+
+
+
+
+		SELECT p.name, s.sysadmin, p.default_database_name
+FROM    sys.server_principals p
+        JOIN sys.syslogins s ON p.sid = s.sid
+WHERE   p.type_desc IN ('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP', 'server_role')
+        -- Logins that are not process logins
+         AND p.name NOT LIKE '##%'
+		AND p.default_database_name in ('master', 'model','msdb')
+        -- Logins that are sysadmins
+        AND s.sysadmin = 0
+
+
+
+--Lists all the databases in the instances 
+
+SELECT name, database_id, create_date  
+FROM sys.databases ;  
