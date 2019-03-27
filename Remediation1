@@ -1,0 +1,24 @@
+
+--==========================================================================================================================
+--==========================================================================================================================
+---- Corporate  SEG 22.4
+---- Default database for DB administrators
+--==========================================================================================================================
+SELECT  'ALTER LOGIN [' + sp.name + '] WITH DEFAULT_DATABASE=[master]' + CHAR(13)+CHAR(10) FROM sys.server_principals sp
+		INNER JOIN sys.server_role_members sr ON sp.principal_id = sr.member_principal_id
+		INNER JOIN sys.server_principals sp2 ON sr.role_principal_id = sp2.principal_id
+	WHERE sp.[type] IN ('U', 'G', 'S', 'C')
+		AND sp2.name = 'sysadmin'
+		AND sp.default_database_name not in ('master')
+		AND sp.is_disabled = 0
+
+--==========================================================================================================================
+---- CIS 3.8
+---- Default database for Non-DB administrators
+--==========================================================================================================================
+SELECT 'ALTER LOGIN [' + sp.name + '] WITH DEFAULT_DATABASE=[AdminSQL]' + CHAR(13)+CHAR(10) FROM sys.server_principals sp
+		LEFT OUTER JOIN sys.server_role_members sr ON sp.principal_id = sr.member_principal_id
+	WHERE sr.role_principal_id IS NULL
+		AND sp.[type] IN ('U', 'G', 'S')
+		AND sp.default_database_name IN ('master','model','msdb')
+		AND sp.is_disabled = 0
