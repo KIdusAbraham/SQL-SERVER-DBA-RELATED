@@ -1,3 +1,44 @@
+--rule 1
+--------------------------------------------
+DECLARE @cnt INT;
+select @cnt = count( columnname ) 
+from tables 
+if (@cnt = 0) 
+	BEGIN
+	exec master..xp_cmdshell 'echo ''SEG_2.15,CIS,xp_cmdshell disabled,Comply,No remediation,El parametro "xp_cmdshell" esta deshabilitado> C:\Hardening\Hardnening_Resume.txt'''
+	END 
+ELSE
+	BEGIN
+	while @cnt > 0
+		BEGIN
+		alter login loginname with default_database = 'master' 	
+		END
+	END
+END
+
+--------------------------------------------
+
+--rule 2
+---------------------------------
+DECLARE @cnt INT;
+select @cnt = count( columnname ) 
+from tables 
+if (@cnt = 0) 
+	BEGIN
+	exec master..xp_cmdshell 'echo ''SEG_2.15,CIS,xp_cmdshell disabled,Comply,No remediation,El parametro "xp_cmdshell" esta deshabilitado> C:\Hardening\Hardnening_Resume.txt'''
+	END 
+ELSE
+	BEGIN
+	while @cnt > 0
+		BEGIN
+		alter login loginname with default_database = 'master' 	
+		END
+	END
+END
+--------------------------------
+
+
+
 --9	2.6	The Remote Access must be disabled
 if (SELECT CONVERT(INT,value)
 FROM sys.configurations
