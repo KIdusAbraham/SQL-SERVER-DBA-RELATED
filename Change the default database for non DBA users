@@ -1,0 +1,31 @@
+DROP TABLE IF EXISTS #temp
+CREATE TABLE #temp
+(
+[Login] sysname,
+DBName varchar(512)
+)
+
+insert into #temp
+exec sp_msforeachdb 'USE ? select name [login],db_name() from sys.database_principals where type=''U'' and [name] not like ''##%'''
+-- Here you can add "where [name]= ''Login_name'' " if you want to set default database for specific login
+DECLARE @QUERY NVARCHAR(1024)
+DECLARE My_Cursor CURSOR FOR
+    select 'ALTER LOGIN '+[Login]+' WITH DEFAULT_DATABASE=['+DBName+']'
+    from
+    (
+    select
+            distinct row_number() over(partition by t.[Login] order by t.DBName) Id,[Login],t.DBName
+    from    #temp t inner join syslogins s on t.[Login]=s.[name]
+    ) a
+
+where Id=1
+
+OPEN My_Cursor
+FETCH NEXT FROM My_Cursor INTO @QUERY
+WHILE @@fetch_status=0
+    BEGIN
+    EXEC (@QUERY);
+    FETCH NEXT FROM My_Cursor INTO @QUERY
+    END
+CLOSE My_Cursor
+DEALLOCATE My_Cursor
