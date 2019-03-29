@@ -1,13 +1,42 @@
-SELECT *
-FROM    sys.server_principals p
-        JOIN sys.syslogins s ON p.sid = s.sid
-WHERE   p.type_desc IN ('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP')
-        -- Logins that are not process logins
-         AND p.name NOT LIKE '##%'
-		AND p.default_database_name not in ('master')
-        -- Logins that are sysadmins
-        AND s.sysadmin = 1
+-----------------------------------------------------
 
+CIS RULE 1: All non-db logins should have a master database as thier default database 
+
+-----------------------------
+
+DECLARE @Name SYSNAME
+DECLARE @Command NVARCHAR(2000)
+
+DECLARE c CURSOR READ_ONLY
+FOR
+SELECT p.name
+FROM sys.server_principals p
+    JOIN sys.syslogins s ON p.sid = s.sid
+WHERE p.type_desc IN ('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP')
+    AND p.name NOT LIKE '##%'
+    AND p.default_database_name not in ('master')
+    AND s.sysadmin = 1
+
+OPEN c
+FETCH NEXT FROM c INTO @Name
+
+WHILE @@FETCH_STATUS = 0 BEGIN
+
+    SET @Command = 'alter login ' + QUOTENAME(@Name) +' with default_database = [master]'
+    --print @Command
+    EXEC(@Command)
+    FETCH NEXT FROM c INTO @Name
+
+END
+
+CLOSE c
+DEALLOCATE c
+
+-----------------------------------------------------
+
+CIS RULE 2: All non-db logins should not have a system database as thier default database 
+
+-----------------------------
 
 
 
