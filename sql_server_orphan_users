@@ -1,0 +1,16 @@
+---the following query lists all orphan users in the instance 
+SELECT dp.type_desc, dp.SID, dp.name AS user_name  
+FROM sys.database_principals AS dp  
+LEFT JOIN sys.server_principals AS sp  
+    ON dp.SID = sp.SID  
+WHERE sp.SID IS NULL  
+    AND authentication_type_desc = 'INSTANCE';  
+
+--one they are detected, we can perform several operation to delete or fix or deny prevaillages for them
+--1. fix orphan users 
+--(https://docs.microsoft.com/en-us/sql/sql-server/failover-clusters/troubleshoot-orphaned-users-sql-server?view=sql-server-2017)
+
+--2. delete orphan users 
+
+--3. deny connection to the instance and any database for orphan users 
+
