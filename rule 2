@@ -1,0 +1,28 @@
+DECLARE @Name SYSNAME
+DECLARE @Command NVARCHAR(2000)
+declare @DBname varchar(50) 
+
+DECLARE c CURSOR READ_ONLY
+FOR
+SELECT p.name
+FROM sys.server_principals p
+    JOIN sys.syslogins s ON p.sid = s.sid
+WHERE p.type_desc IN ('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP')
+    AND p.name NOT LIKE '##%'
+    AND p.default_database_name in ('master', 'model','msdb')
+    AND s.sysadmin = 0
+select @DBname = name from sys.databases where name = db_name(6)
+OPEN c
+FETCH NEXT FROM c INTO @Name 
+
+WHILE @@FETCH_STATUS = 0 BEGIN
+    
+    SET @Command = 'alter login ' + QUOTENAME(@Name) +' with default_database =  ' + QUOTENAME(@DBname)
+    --print @Command
+    EXEC(@Command)
+    FETCH NEXT FROM c INTO @Name
+
+END
+
+CLOSE c
+DEALLOCATE c
