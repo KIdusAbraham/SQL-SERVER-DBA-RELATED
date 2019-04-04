@@ -1,0 +1,122 @@
+
+--stored procedure to check if there is an orphan user in a database
+use TestDB
+go
+sp_change_users_login @Action = 'Report';
+
+-- T-SQL statement to query orphan users in a dastabase 
+
+ SELECT dp.type_desc, dp.SID, dp.name AS user_name  
+FROM sys.database_principals AS dp  
+LEFT JOIN sys.server_principals AS sp  
+    ON dp.SID = sp.SID  
+WHERE sp.SID IS NULL  
+    AND authentication_type_desc = 'INSTANCE';  
+
+	-- T-SQL statement to query orphan users in a dastabase
+
+select DB_NAME() [database], name as [user_name], type_desc,default_schema_name,create_date,modify_date from sys.database_principals 
+where type in ('G','S','U') 
+and authentication_type<>2 -- Use this filter only if you are running on SQL Server 2012 and major versions and you have "contained databases"
+and [sid] not in ( select [sid] from sys.server_principals where type in ('G','S','U') ) 
+and name not in ('dbo','guest','INFORMATION_SCHEMA','sys','MS_DataCollectorInternalUser')
+
+	-- T-SQL statement to query orphan users in a dastabase
+
+select u.name from master..syslogins l 
+right join sysusers u on l.sid = u.sid 
+    where l.sid is null and issqlrole <> 1 and isapprole <> 1   
+    and u.name not in ('INFORMATION_SCHEMA' ,'guest','system_function_schema','sys')
+
+	--Remove/delete orphan users 
+	exec sp_revokedbaccess 'AB'
+
+
+-------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+--denying a connect permission to the orphan users 
+use [TestDB2] --your_database_name
+deny connect to [TestLogin] --your_user_name
+---------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------
+
+DECLARE @ORPHANUSER varchar (50)
+DECLARE @RUN_Orphan_cursor varchar(max)
+DECLARE Orphan_cursor cursor 
+for 
+		SELECT dp.name AS user_name  
+		FROM sys.database_principals AS dp  
+		LEFT JOIN sys.server_principals AS sp ON dp.SID = sp.SID  
+		WHERE sp.SID IS NULL  
+			AND authentication_type_desc = 'INSTANCE'; 
+
+OPEN Orphan_cursor
+FETCH NEXT FROM Orphan_cursor INTO @ORPHANUSER 
+ 
+WHILE @@FETCH_STATUS = 0 BEGIN 
+
+	--use the following if we need to delete the orphan user
+    SET @RUN_Orphan_cursor = 'exec sp_revokedbaccess' + QUOTENAME(@ORPHANUSER) 
+
+	--OR use the follo
+
+    --SET @RUN_Orphan_cursor = 'deny connect to' + QUOTENAME(@ORPHANUSER) 
+    EXEC(@RUN_Orphan_cursor) 
+    FETCH NEXT FROM Orphan_cursor INTO @ORPHANUSER 
+END 
+CLOSE Orphan_cursor 
+DEALLOCATE Orphan_cursor 
+
+
+
+
+
+
+
+END
+
+--denying a connect permission to the orphan users 
+use [TestDB2] --your_database_name
+deny connect to [TestLogin] --your_user_name
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+--this fixes orhane user situation and create a login in master database 
+EXEC sp_change_users_login 'Auto_Fix', 'AB', null, 'Tes34!er'
+
+--the script below is used how to diable a login 
+
+ALTER LOGIN AB DISABLE;
+
+---The following Script is used to deny connection to SQL server for a login
+USE [master]
+GO
+ALTER LOGIN [AB] WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english], CHECK_EXPIRATION=OFF, CHECK_POLICY=ON
+go
+DENY CONNECT SQL TO [AB]
+
+---The following script is used to list all databases a database role is mapped. This will be imp
+
+
+SELECT * --sp.[name] AS proxyname 
+FROM sysproxylogin spl 
+JOIN sys.database_principals dp ON dp.sid = spl.sid 
+JOIN sysproxies sp ON sp.proxy_id = spl.proxy_id 
+WHERE principal_id = USER_ID('public')
+
+
+	SELECT * --sp.name AS proxyname
+	FROM msdb.dbo.sysproxylogin spl
+		INNER JOIN msdb.sys.database_principals dp
+		ON dp.sid = spl.sid
+		INNER JOIN msdb.dbo.sysproxies sp
+		ON sp.proxy_id = spl.proxy_id
+	WHERE principal_id = USER_ID('public')
+
+
+
