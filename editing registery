@@ -1,0 +1,42 @@
+Hiding an Instance using T-SQL:
+
+The information to hide/show instance is stored in registry. You can use extended stored procedure xp_instance_regwrite to update the registry value to hide/show instance. Below T-SQL will hide the instance. To unhide instance set @value to 0 :
+
+EXEC master..xp_instance_regwrite
+
+      @rootkey = N'HKEY_LOCAL_MACHINE',
+
+      @key =
+N'SOFTWARE\Microsoft\Microsoft SQL Server\MSSQLServer\SuperSocketNetLib',
+
+      @value_name = N'HideInstance',
+
+      @type = N'REG_DWORD',
+
+      @value = 1
+
+      — 0 = No, 1 = Yes
+
+To check if an instance is hidden you can use xp_instance_regread to check registry values:
+
+DECLARE @getValue INT
+
+EXEC master..xp_instance_regread
+
+      @rootkey = N'HKEY_LOCAL_MACHINE',
+
+      @key=
+
+N'SOFTWARE\Microsoft\Microsoft SQL Server\MSSQLServer\SuperSocketNetLib',
+
+      @value_name = N'HideInstance',
+
+      @value = @getValue OUTPUT
+
+SELECT @getValue
+
+ 
+Reference: 
+https://sqlandme.com/2011/08/23/sql-server-hide-an-instance-of-sql-server/
+
+ 
