@@ -1,0 +1,14 @@
+How to change default filegroup in SQL server ?
+
+      ALTER
+      DATABASE TestingBuckWoody
+      MODIFY
+      FILEGROUP GileGroupName DEFAULT;
+      GO
+
+
+
+
+REference: 
+https://blogs.msdn.microsoft.com/buckwoody/2009/05/21/sql-server-best-practices-setting-a-default-filegroup/
+
