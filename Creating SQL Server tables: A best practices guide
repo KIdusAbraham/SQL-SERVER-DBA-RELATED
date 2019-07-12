@@ -1,9 +1,30 @@
 Creating SQL Server tables: A best practices guide
 
-When creating SQL Server tables, follow these quick tips for defining filegroups, indexes, key constraints and partitions to improve SQL Server performance.
+When creating SQL Server tables, follow these quick tips for defining filegroups, indexes, key constraints and partitions to 
+improve SQL Server performance.
+
+Performance of a SQL Server table can depend on how you've defined data types, indexes, partitions and other components. 
+Use this best practices guide when creating tables and columns for large databases.
+
+Creating and maintaining SQL Server tables isn't rocket science, or is it? Anyone can use SQL Server Management Studio or the 
+CREATE TABLE statement to put together a collection of columns. How well the tables perform depends largely on choices you make when 
+defining data types, constraints, indexes, file groups where the table is built, as well as partitioning.
+
+If you're building a quick-and-dirty application with a few thousand rows in each table and only a handful of users, 
+you can create all tables in five minutes or less. On the other hand, if you are building an enterprise class solution you should 
+carefully review your requirements and define the table structures accordingly. Subsequently you should maintain tables and 
+corresponding indexes to ensure best possible performance for the application.
+
+Here are some recommended practices for tables and columns when architecting large SQL Server databases. 
+Note: The goal here is to alert you of potential issues and solutions, not to explain the details of each solution.
+
+
+
+
 1.	Always save CREATE TABLE statements, along with all other statements defining database schema in a secure location. Every time you make a change to a database object, be sure to script the change and check it into version-control software, such as Visual Source Safe. 
 
 With such policy you can easily re-create database schema on the same or different server, if necessary. Also, if you have the same database on multiple servers, it's easy to compare schemas and reconcile any differences that might have crept in over time.
+
 2.	Although descriptive, table names have no performance benefits. They make databases self-documenting and easier to code against. Table names should reflect their business meaning.
 3.	Create user tables on a non-primary filegroup; reserve the primary file group for system objects. This way the system supplied and user-defined objects do not compete for disk resources.
 4.	Create commonly accessed tables on the same filegroup. You can expect performance benefits if the data of commonly joined tables resides on the same disk. 
