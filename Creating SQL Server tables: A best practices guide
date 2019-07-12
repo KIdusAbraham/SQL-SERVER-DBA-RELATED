@@ -21,25 +21,44 @@ Note: The goal here is to alert you of potential issues and solutions, not to ex
 
 
 
-1.	Always save CREATE TABLE statements, along with all other statements defining database schema in a secure location. Every time you make a change to a database object, be sure to script the change and check it into version-control software, such as Visual Source Safe. 
+1.	Always save CREATE TABLE statements, along with all other statements defining database schema in a secure location. Every time you make a change to a database object, 
+    be sure to script the change and check it into version-control software, such as Visual Source Safe. 
 
-With such policy you can easily re-create database schema on the same or different server, if necessary. Also, if you have the same database on multiple servers, it's easy to compare schemas and reconcile any differences that might have crept in over time.
+      With such policy you can easily re-create database schema on the same or different server, if necessary. Also, if you have the same database on multiple servers, it's easy to compare schemas 
+      and reconcile any differences that might have crept in over time.
 
 2.	Although descriptive, table names have no performance benefits. They make databases self-documenting and easier to code against. Table names should reflect their business meaning.
 3.	Create user tables on a non-primary filegroup; reserve the primary file group for system objects. This way the system supplied and user-defined objects do not compete for disk resources.
 4.	Create commonly accessed tables on the same filegroup. You can expect performance benefits if the data of commonly joined tables resides on the same disk. 
-5.	Create a clustered index on every table. Each table can only have a single clustered index. If a table has a clustered index, its data is physically sorted according to the clustered index key. Clustered indexes in SQL Server have numerous benefits. For example, if you retrieve data from a table using an ORDER BY clause referencing the clustered index key, the data does not need to be sorted at query execution time.
-6.	If two tables have a common column, for example customer_id, and both tables have clustered indexes on customer_id column joining, such tables will be considerably more efficient than joining the same tables based on the same column but without clustered indexes.
-7.	Ensure the clustered index is built on a column that contains distinct values in each row. This makes the clustered index also a unique index. If the clustered index key(s) contains non-unique values, SQL Server will add a hidden column to your table to make clustered index keys unique.
-8.	The clustered index should be created on the column(s) that is most commonly used for retrieving data from the table. Since you can only have one clustered index per table, you should carefully examine the data retrieval patterns to choose the most effective key(s) for your clustered index.
+5.	Create a clustered index on every table. Each table can only have a single clustered index. If a table has a clustered index, its data is physically sorted according to the clustered index key. 
+    Clustered indexes in SQL Server have numerous benefits. For example, 
+    if you retrieve data from a table using an ORDER BY clause referencing the clustered index key, the data does not need to be sorted at query execution time.
+6.	If two tables have a common column, for example customer_id, and both tables have clustered indexes on customer_id column joining, such tables will be considerably more 
+    efficient than joining the same tables based on the same column but without clustered indexes.
+7.	Ensure the clustered index is built on a column that contains distinct values in each row. This makes the clustered index also a unique index. If the clustered index key(s) contains non-unique values, 
+    SQL Server will add a hidden column to your table to make clustered index keys unique.
+8.	The clustered index should be created on the column(s) that is most commonly used for retrieving data from the table. Since you can only have one clustered index per table, 
+    you should carefully examine the data retrieval patterns to choose the most effective key(s) for your clustered index.
 9.	In addition to the clustered index, create non-clustered indexes, particularly on those columns used for joining the table to other tables or for filtering the data set to be retrieved.
-10.	When adding a primary key constraint, always specify whether it is clustered or non-clustered. Primary key columns by definition must contain unique values so they're good candidates for clustered indexes. But depending on your data retrieval patterns you might not want the primary key index to be clustered.
-11.	Be sure to rebuild or de-fragment your indexes periodically. SQL Server 2005 Enterprise Edition supports on-line index rebuilds which should reduce index maintenance window/overhead considerably. Nonetheless, maintaining indexes does require considerable system resources. Weigh your index maintenance options carefully.
-12.	SQL Server uses table and index statistics to come up with the most cost-effective query execution plans. SQL Server can maintain statistics on each index automatically, but you can override this option. For example, if you anticipate heavy transactional activity (millions of INSERT, UPDATE, and DELETE statements) during certain hours, you could turn off automatic update of statistics on each index. If so, be sure to periodically update statistics manually.
-13.	If you have numerous "lookup" tables with very few rows in each, consider combining them into a single "master lookup" table. For example, you could have numerous "type_lookup" and "category_lookup" tables, each with a dozen of rows. Instead of having to maintain 30 different lookup tables, you can combine them in a single table that has row_identifier, row_type and row_value columns.
-14.	Row_type can denote the kind of lookup value found in the row. This could make developing stored procedures simpler than trying to remember 30 different table names. Since the master table will have relatively few rows, – a few thousand rows at most – you will not see any performance degradation.
-15.	Use table triggers sparingly. You can often implement trigger functionality with constraints which tend to be considerably more efficient. A simple example is enforcing referential integrity by ensuring the record added to a given table has a corresponding record in a related table. Instead of using triggers, you should enforce such rules through foreign key constraints. Similarly if you wish to validate a string column's format you should use a check constraint, instead of a trigger. For example, social security numbers always have nine digits separated by two dashes, as in 123-45-6789. You should use a check constraint as opposed to a trigger to validate values to be inserted into this column.
-16.	If a table contains millions of rows and you have multiple disks (or disk arrays) at your disposal, take advantage of table and index partitioning. Partitioning can provide considerable query performance improvements. It can also make loading and purging large data sets from a table very fast.
+10.	When adding a primary key constraint, always specify whether it is clustered or non-clustered. Primary key columns by definition must contain unique values so they're good candidates for clustered indexes. 
+    But depending on your data retrieval patterns you might not want the primary key index to be clustered.
+11.	Be sure to rebuild or de-fragment your indexes periodically. SQL Server 2005 Enterprise Edition supports on-line index rebuilds which 
+    should reduce index maintenance window/overhead considerably. Nonetheless, maintaining indexes does require considerable system resources. Weigh your index maintenance options carefully.
+12.	SQL Server uses table and index statistics to come up with the most cost-effective query execution plans. SQL Server can maintain statistics on each index automatically, but you can override this option. For example, 
+    if you anticipate heavy transactional activity (millions of INSERT, UPDATE, and DELETE statements) 
+    during certain hours, you could turn off automatic update of statistics on each index. If so, be sure to periodically update statistics manually.
+13.	If you have numerous "lookup" tables with very few rows in each, consider combining them into a single "master lookup" table. For example, you could have numerous "type_lookup" and "category_lookup" 
+    tables, each with a dozen of rows. Instead of having to maintain 30 different lookup tables, 
+     you can combine them in a single table that has row_identifier, row_type and row_value columns.
+14.	Row_type can denote the kind of lookup value found in the row. This could make developing stored procedures simpler than trying to remember 30 different table names. Since the master table will have relatively few rows, 
+    – a few thousand rows at most – you will not see any performance degradation.
+15.	Use table triggers sparingly. You can often implement trigger functionality with constraints which tend to be considerably more efficient. A simple example is enforcing referential 
+    integrity by ensuring the record added to a given table has a corresponding record in a related table. Instead of using triggers, 
+    you should enforce such rules through foreign key constraints. Similarly if you wish to validate a string column's format you should use a check constraint, instead of a trigger. 
+    For example, social security numbers always have nine digits separated by two dashes, as in 123-45-6789. You should use a check constraint as opposed to a trigger to validate values to be inserted into this column.
+16.	If a table contains millions of rows and you have multiple disks (or disk arrays) at your disposal, take advantage of table and index partitioning. 
+    Partitioning can provide considerable query performance improvements. 
+    It can also make loading and purging large data sets from a table very fast.
 17.	If the table is partitioned, make sure its indexes are aligned; this means indexes are using the same partitioning scheme as the table.
 
                 1) Create new filegroup:
