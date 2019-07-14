@@ -1,0 +1,44 @@
+What are SQL SERVER SYSTEM DATABASES?
+
+  1. MASTER:
+      Used to store the following information
+          file locations of the user databases
+          login accounts
+          server configration settings 
+          linked server information
+          start-up stores procedures
+  
+  2. MODEL:
+          its a templete database that is copied into a new database 
+          Options set to the model database will be appplied to a new databases
+          Used to create a tenpdb everytime the server restarts
+  
+  3. MSDB:
+         support SQL server agent 
+         SQL Server management studio
+         Database Mail
+         Service Broker
+         History and Metadata information is available in MSDB
+         Backup and Restore History for databases
+         History of SQL server agent jobs
+         
+  4. TEMPDB:
+  
+       Its a shared resource used by all users
+       Its is used for temporary objects, worktables, online index operations, cursors, table variables, 
+        snapshot isolation version store, 
+     
+     
+The following two system databases are created when certain operation are performed:
+ 
+ 5. Reporting Services Database
+    ReportServer - Its available if we install Reporting Services
+    ReportServerTempDB - Its available if we install Reporting Services
+ 
+ 6. REsources database:
+   Create when we create a database snapshot to store the snapshot dataabase  
+  
+  
+  7. Distribution database: 
+      This database is created when we setup replication to store records of the ditribution agent job of the replication
+  
